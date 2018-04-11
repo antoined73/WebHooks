@@ -1,7 +1,7 @@
-package server;
+package consumer.server;
 
-import common.Distante;
-import common.IService;
+import consumer.common.Distante;
+import consumer.common.IService;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;

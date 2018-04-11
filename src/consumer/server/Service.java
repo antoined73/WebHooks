@@ -1,6 +1,6 @@
-package server;
+package consumer.server;
 
-import common.IService;
+import consumer.common.IService;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;

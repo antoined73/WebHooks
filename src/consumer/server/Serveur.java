@@ -1,6 +1,6 @@
-package server;
+package consumer.server;
 
-import common.Distante;
+import consumer.common.Distante;
 
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -9,9 +9,6 @@ import java.rmi.registry.Registry;
 public class Serveur {
     public static void main(String[] args) {
         int numPort = 2500;
-        if(args.length > 1){
-            numPort = Integer.parseInt(args[1]);
-        }
 
         Registry r = null;
         try {
