@@ -13,8 +13,6 @@ import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.List;
 
-import static jdk.nashorn.internal.objects.NativeBoolean.valueOf;
-
 public class PClient {
 
     private static int REGISTRY_PORT_NUMBER;
@@ -60,17 +58,15 @@ public class PClient {
     public void readFile() throws IOException, InterruptedException {
         FileReader fileReader = new FileReader("data\\datafile.txt");
         BufferedReader bufferedReader = new BufferedReader(fileReader);
-        int index = 0, bufferSize = 2 + (int) (Math.random() * 8);
-        char[] buffer = new char[10];
+        int buffer;
 
-        while (bufferedReader.read(buffer, index, bufferSize) != -1) {
-            index += bufferSize;
-            bufferSize = 2 + (int) (Math.random() * 8);
+        do {
+            buffer = bufferedReader.read();
             for (IService dsr : streamReaders) {
                 dsr.printStream(String.valueOf(buffer));
                 Thread.sleep(1000);
-                System.err.println(String.valueOf(buffer));
             }
         }
+        while (buffer != -1);
     }
 }
