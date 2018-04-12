@@ -1,6 +1,7 @@
-package producer.client;
+package producer;
 
-import common.DistantStreamReader;
+import common.Distant;
+import common.IService;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -11,16 +12,23 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
+
+import static jdk.nashorn.internal.objects.NativeBoolean.valueOf;
 
 public class PClient {
 
-    private static int REGISTRY_PORT_NUMBER = 2501;
+    private static int REGISTRY_PORT_NUMBER;
 
-    private List<DistantStreamReader> streamReaders = new ArrayList<>();
+    private List<IService> streamReaders = new ArrayList<>();
+
+    public void launch(int port) throws RemoteException {
+        Registry r = LocateRegistry.createRegistry(port);
+        REGISTRY_PORT_NUMBER = port;
+    }
 
     /**
      * this methods lets a new consumer subscribe to the stream.
+     *
      * @return -1 when the registry could not be found<br>0 when the consumer is correctly added,<br>1 if the consumer was already subscribed<br>2 if there was an error adding the consumer
      */
     public int registerSubscriber() {
@@ -30,14 +38,15 @@ public class PClient {
 
         try {
             r = LocateRegistry.getRegistry(REGISTRY_PORT_NUMBER);
-            result = addStreamReader((DistantStreamReader) r.lookup("client"));
+            Distant d = (Distant) r.lookup("client");
+            result = addStreamReader(d.createService());
         } catch (NullPointerException | NotBoundException | RemoteException e) {
             e.printStackTrace();
         }
         return result;
     }
 
-    private int addStreamReader(DistantStreamReader dsr) {
+    private int addStreamReader(IService dsr) {
         if (streamReaders.contains(dsr))
             return 1;
         try {
@@ -48,17 +57,20 @@ public class PClient {
         }
     }
 
-    public void readFile(String filename) throws IOException {
+    public void readFile() throws IOException, InterruptedException {
         FileReader fileReader = new FileReader("data\\datafile.txt");
         BufferedReader bufferedReader = new BufferedReader(fileReader);
-        int index = 0, bufferSize = (int) (Math.random() * 10);
+        int index = 0, bufferSize = 2 + (int) (Math.random() * 8);
         char[] buffer = new char[10];
 
         while (bufferedReader.read(buffer, index, bufferSize) != -1) {
             index += bufferSize;
-            bufferSize = (int) (Math.random() * 10);
-            for (DistantStreamReader dsr : streamReaders)
+            bufferSize = 2 + (int) (Math.random() * 8);
+            for (IService dsr : streamReaders) {
                 dsr.printStream(String.valueOf(buffer));
+                Thread.sleep(1000);
+                System.err.println(String.valueOf(buffer));
+            }
         }
     }
 }
