@@ -1,7 +1,7 @@
 package consumer.client;
 
-import consumer.common.Distante;
-import consumer.common.IService;
+import common.Distante;
+import common.IService;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
