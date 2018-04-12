@@ -12,9 +12,11 @@ import java.util.Scanner;
 public class Client implements DistantObjectObserver{
 
     private DistantObject objetDistant = null;
+    private int consumerPort;
 
     public void launch(int numPort) {
 
+        this.consumerPort = numPort;
         //Listening keyboard
         Scanner scanner = new Scanner(System.in);
         String cmdLine;
@@ -53,16 +55,17 @@ public class Client implements DistantObjectObserver{
     private void connectToProducerServer(String portNumber) {
         Registry r;
         try {
-            int numPort = Integer.parseInt(portNumber);
-            r = LocateRegistry.getRegistry (numPort);
+            int producerPort = Integer.parseInt(portNumber);
+            r = LocateRegistry.getRegistry (producerPort);
             if(r!=null){
-                System.out.println("Registry trouvé sur le port "+numPort);
+                System.out.println("Registry trouvé sur le port "+producerPort);
                 System.out.println(r);
             }
             objetDistant = new DistantStreamReader();
             objetDistant.addObserver(this);
-            r.rebind("RMI_DEZARNAUD",objetDistant);
-            System.out.println("Object sended on port "+numPort+" with name \"RMI_DEZARNAUD\". The distant server can now send data anytime.");
+            String registerName = "client";
+            r.rebind(registerName,objetDistant);
+            System.out.println("Object sended on port "+ consumerPort +" with name \""+registerName+"\". The distant server can now send data anytime.");
         } catch (RemoteException e) {
             e.printStackTrace();
         }
