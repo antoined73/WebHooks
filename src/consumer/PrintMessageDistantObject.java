@@ -6,17 +6,17 @@ import common.IService;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-public class DistantObject extends UnicastRemoteObject implements Distant {
+public class PrintMessageDistantObject extends UnicastRemoteObject implements Distant {
 
     private IService service = null;
 
-    protected DistantObject() throws RemoteException {
+    protected PrintMessageDistantObject() throws RemoteException {
     }
 
     @Override
     public IService createService() throws RemoteException {
         if (this.service == null) {
-            service = new Service();
+            service = new PrintMessageService();
         }
         return service;
     }
