@@ -11,7 +11,6 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -21,23 +20,25 @@ public class PClient {
 
     private List<IPrintMessageService> streamReaders = new CopyOnWriteArrayList<>();
 
-    public void launch(int port) throws RemoteException {
+    void launch(int port) throws RemoteException {
         Registry r = LocateRegistry.createRegistry(port);
         Distant objetDistant = new ClientConnectedDistantObject(this);
         String registerName = "server1278";
-        if (r != null) {
-            r.rebind(registerName, objetDistant);
-            System.out.println("Object send on port " + port + " with name \"" + registerName + "\". The distant client can now send subscribe anytime.");
-        }
+        r.rebind(registerName, objetDistant);
+        System.err.println("# Server is registered on port " + port + " with name \"" + registerName
+                + "\". Clients may now subscribe anytime.");
         REGISTRY_PORT_NUMBER = port;
     }
 
     /**
-     * this methods lets a new consumer subscribe to the stream.
+     * this methods emulates the Producer's server and lets a new consumer subscribe to the stream.
      *
-     * @return -1 when the registry could not be found<br>0 when the consumer is correctly added,<br>1 if the consumer was already subscribed<br>2 if there was an error adding the consumer
+     * @return -1 when the registry could not be found
+     * <br>0 when the consumer is correctly added,
+     * <br>1 if the consumer was already subscribed
+     * <br>2 if there was an error adding the consumer
      */
-    public int registerSubscriber(String name) {
+    int registerSubscriber(String name) {
 
         Registry r = null;
         int result = -1;
@@ -65,19 +66,33 @@ public class PClient {
         }
     }
 
-    public void readFile() throws IOException, InterruptedException {
-        FileReader fileReader = new FileReader("data\\datafile.txt");
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
-        String buffer;
+    /**
+     * This method emulates the Producer's client and notifies all the subscribed clients
+     * whenever new data is received (every 0,5 seconds). Once used once, it will run a
+     * neverending loop, reading the data\datafile.txt file.
+     *
+     * @throws IOException if there's an error with the data file
+     */
+    void readFile() throws IOException {
 
-        do {
-            buffer = bufferedReader.readLine();
-            Iterator<IPrintMessageService> it = streamReaders.iterator();
-            while (it.hasNext()) {
-                it.next().printStream(buffer);
-                Thread.sleep(1000);
+        for (; ; ) {
+            FileReader fileReader = new FileReader("data\\datafile.txt");
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            char[] buffer = new char[20];
+            int isOver;
+
+            do {
+                isOver = bufferedReader.read(buffer, 0, 20);
+                for (IPrintMessageService streamReader : streamReaders) {
+                    streamReader.printStream(String.valueOf(buffer));
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
+            while (isOver != -1);
         }
-        while (buffer != null);
     }
 }
