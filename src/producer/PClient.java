@@ -21,13 +21,13 @@ public class PClient {
     private List<IPrintMessageService> streamReaders = new CopyOnWriteArrayList<>();
 
     void launch(int port) throws RemoteException {
+        REGISTRY_PORT_NUMBER = port;
         Registry r = LocateRegistry.createRegistry(port);
         Distant objetDistant = new ClientConnectedDistantObject(this);
-        String registerName = "server1278";
+        String registerName = "Producer12";
         r.rebind(registerName, objetDistant);
-        System.err.println("# Server is registered on port " + port + " with name \"" + registerName
-                + "\". Clients may now subscribe anytime.");
-        REGISTRY_PORT_NUMBER = port;
+        System.err.println("# Producer is registered on port " + REGISTRY_PORT_NUMBER + " with name \"" + registerName
+                + "\". Consumers may now subscribe anytime.");
     }
 
     /**
@@ -50,7 +50,6 @@ public class PClient {
         } catch (NullPointerException | NotBoundException | RemoteException e) {
             e.printStackTrace();
         }
-        System.out.println(result);
         return result;
     }
 
