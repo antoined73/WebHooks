@@ -23,7 +23,7 @@ public class PClient {
     void launch(int port) throws RemoteException {
         REGISTRY_PORT_NUMBER = port;
         Registry r = LocateRegistry.createRegistry(port);
-        Distant objetDistant = new ClientConnectedDistantObject(this);
+        Distant objetDistant = new ConsumerConnectionDistantObject(this);
         String registerName = "Producer12";
         r.rebind(registerName, objetDistant);
         System.err.println("# Producer is registered on port " + REGISTRY_PORT_NUMBER + " with name \"" + registerName
@@ -83,7 +83,7 @@ public class PClient {
             do {
                 isOver = bufferedReader.read(buffer, 0, 20);
                 for (IPrintMessageService streamReader : streamReaders) {
-                    streamReader.printStream(String.valueOf(buffer));
+                    streamReader.printMessage(String.valueOf(buffer));
                     try {
                         Thread.sleep(500);
                     } catch (InterruptedException e) {

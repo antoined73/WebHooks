@@ -1,22 +1,22 @@
 package producer;
 
-import common.IClientConnectedService;
+import common.IConsumerConnectionService;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-public class ClientConnectedService extends UnicastRemoteObject implements IClientConnectedService, Serializable {
+public class ConsumerConnectionService extends UnicastRemoteObject implements IConsumerConnectionService, Serializable {
 
     private PClient client;
 
-    protected ClientConnectedService(PClient client) throws RemoteException {
+    protected ConsumerConnectionService(PClient client) throws RemoteException {
         super();
         this.client = client;
     }
 
     @Override
-    public void newClientConnected(String name) throws RemoteException {
+    public void newConsumerConnection(String name) throws RemoteException {
         int result = this.client.registerSubscriber(name);
         switch (result) {
             case -1:

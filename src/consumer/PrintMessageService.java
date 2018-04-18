@@ -13,7 +13,7 @@ public class PrintMessageService extends UnicastRemoteObject implements IPrintMe
     }
 
     @Override
-    public void printStream(String stream) throws RemoteException {
+    public void printMessage(String stream) throws RemoteException {
         System.out.println(stream);
     }
 }

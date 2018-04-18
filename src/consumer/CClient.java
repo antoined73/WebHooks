@@ -1,7 +1,7 @@
 package consumer;
 
 import common.Distant;
-import common.IClientConnectedService;
+import common.IConsumerConnectionService;
 import common.IService;
 
 import java.rmi.NotBoundException;
@@ -44,8 +44,8 @@ public class CClient {
             r = LocateRegistry.getRegistry(producerPort);
             Distant d = (Distant) r.lookup("Producer12");
             IService result = d.createService();
-            IClientConnectedService s = (IClientConnectedService) result;
-            s.newClientConnected(name);
+            IConsumerConnectionService s = (IConsumerConnectionService) result;
+            s.newConsumerConnection(name);
         } catch (NullPointerException | NotBoundException | RemoteException e) {
             e.printStackTrace();
         }
