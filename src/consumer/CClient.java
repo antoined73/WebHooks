@@ -17,10 +17,10 @@ public class CClient {
     public void launch(int portNumber, String name) {
         boolean connected = connectToProducerServer(portNumber, name);
         if(!connected){
-            System.err.println("Producer not found, press a key to retry connection.\n");
-            Scanner s = new Scanner(System.in); //
+            System.err.println("# Producer was not found, please run it and enter a key to try again.\n");
+            Scanner s = new Scanner(System.in);
             s.next();
-            launch(portNumber,name); //retry connection
+            launch(portNumber,name); // retry connection
         }
     }
 
@@ -39,13 +39,12 @@ public class CClient {
             objetDistant = new PrintMessageDistantObject();
             if (r != null) {
                 r.rebind(name, objetDistant);
-                System.err.println("Consumer registered on port " + producerPort + " with name \"" + name
+                System.err.println("# Consumer registered on port " + producerPort + " with name \"" + name
                         + "\". Producer may now send data anytime.\n");
             }else{
                 return false;
             }
         } catch (RemoteException e) {
-            //e.printStackTrace();
             return false;
         }
 
@@ -57,7 +56,6 @@ public class CClient {
             IConsumerConnectionService s = (IConsumerConnectionService) result;
             s.newConsumerConnection(name);
         } catch (NullPointerException | NotBoundException | RemoteException e) {
-            //e.printStackTrace();
             return false;
         }
         return true;

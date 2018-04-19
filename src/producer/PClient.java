@@ -33,6 +33,7 @@ public class PClient {
     /**
      * this methods emulates the Producer's server and lets a new consumer subscribe to the stream.
      *
+     * @param name the consumer trying to subscribe's name
      * @return -1 when the registry could not be found
      * <br>0 when the consumer is correctly added,
      * <br>1 if the consumer was already subscribed
